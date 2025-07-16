@@ -7,6 +7,7 @@ const keys = require("./config/keys");
 
 require("./models/User");
 require("./models/Blog");
+require("./models/SharedPost");
 require("./services/passport");
 require("./services/cache");
 
