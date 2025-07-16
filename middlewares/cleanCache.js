@@ -1,10 +1,22 @@
 const { clearHash } = require("../services/cache");
 
-module.exports = async (req, res, next) => {
-  // this will let route handle do everything it needs to do
-  await next();
+module.exports = (req, res, next) => {
+  // Store the original res.send function
+  const originalSend = res.send;
 
-  // we will do our work after route handler finishes all of its work
+  // Override res.send to clear cache after response is sent
+  res.send = function(...args) {
+    // Call the original send function
+    const result = originalSend.apply(this, args);
+    
+    // Clear cache after response is sent
+    if (req.user && req.user.id) {
+      clearHash(req.user.id);
+    }
+    
+    return result;
+  };
 
-  clearHash(req.user.id);
+  // Continue to next middleware
+  next();
 };
